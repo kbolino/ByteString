@@ -12,7 +12,7 @@ public final class ByteStrings {
 	 * Creates a new string from a byte array.
 	 * @param bytes  The array to copy from.
 	 * @return  A {@link ByteString} {@code b} such that
-	 *   <code>b.{@link #at(int) at}(i) == bytes[i]</code> for all
+	 *   <code>b.{@link ByteString#at(int) at}(i) == bytes[i]</code> for all
 	 *   {@code i} from 0 to {@code bytes.length}.
 	 * @throws NullPointerException  If {@code bytes} is null.
 	 */
@@ -26,7 +26,7 @@ public final class ByteStrings {
 	 * @param offset  The first index of the array to copy.
 	 * @param length  The number of elements from the array to copy.
 	 * @return  A {@link ByteString} {@code b} such that
-	 *   <code>b.{@link #at(int) at}(i) == bytes[i]</code> for all
+	 *   <code>b.{@link ByteString#at(int) at}(i) == bytes[i]</code> for all
 	 *   {@code i} from {@code offset} to {@code offset + length - 1}.
 	 * @throws NullPointerException  If {@code bytes} is null.
 	 * @throws IllegalArgumentException  If {@code offset < 0} or
@@ -50,7 +50,7 @@ public final class ByteStrings {
 	 * its {@linkplain ByteBuffer#limit() limit}.
 	 * @param buffer  The buffer to copy from.
 	 * @return  A {@link ByteString} {@code b} such that
-	 *   <code>b.{@link #at(int) at}(i) ==
+	 *   <code>b.{@link ByteString#at(int) at}(i) ==
 	 *   buffer.{@link ByteBuffer#get(int) get}(i)</code> for all
 	 *   {@code i} from {@code buffer.position()} (initially) to
 	 *   {@code buffer.limit()}.
@@ -66,7 +66,7 @@ public final class ByteStrings {
 	 * @param buffer  The buffer to copy from.
 	 * @param length  The number of bytes to copy.
 	 * @return  A {@link ByteString} {@code b} such that
-	 *   <code>b.{@link #at(int) at}(i) ==
+	 *   <code>b.{@link ByteString#at(int) at}(i) ==
 	 *   buffer.{@link ByteBuffer#get(int) get}(i)</code> for all
 	 *   {@code i} from {@code buffer.position()} (initially) to
 	 *   {@code buffer.position() - 1} (after).
@@ -83,8 +83,8 @@ public final class ByteStrings {
 	
 	/**
 	 * The empty string.
-	 * @return  A singleton {@link ByteString} where
-	 *   <code>{@link #length()} == 0</code>.
+	 * @return  A singleton {@link ByteString} {@code b} where
+	 *   <code>b.{@link ByteString#length() length()} == 0</code>.
 	 */
 	public static ByteString empty() {
 		return Utils.EMPTY_STRING;
@@ -96,8 +96,8 @@ public final class ByteStrings {
 	 * unsigned byte values above 127 to be represented easily.
 	 * @param values  The values to copy.
 	 * @return  A {@link ByteString} {@code b} such that
-	 *   <code>b.{@link #at(int) at}(i) == (byte)values[i]</code> for all
-	 *   {@code i} from 0 to {@code values.length}.
+	 *   <code>b.{@link ByteString#at(int) at}(i) == (byte)values[i]</code>
+	 *   for all {@code i} from 0 to {@code values.length}.
 	 * @throws NullPointerException  If {@code values} is null.
 	 * @throws IllegalArgumentException  If any of {@code values} is not a
 	 *   valid signed or unsigned 8-bit integer.
@@ -129,8 +129,8 @@ public final class ByteStrings {
 	 * Creates a new string consisting entirely of zeros.
 	 * @param length  The number of bytes to have in the string.
 	 * @return  A {@link ByteString} {@code b} such that
-	 *   <code>b.{@link #at(int) at}(i) == 0</code> for all {@code i}
-	 *   from 0 to {@code length - 1}.
+	 *   <code>b.{@link ByteString#at(int) at}(i) == 0</code> for all
+	 *   {@code i} from 0 to {@code length - 1}.
 	 * @throws IllegalArgumentException   If {@code length < 0}.
 	 */
 	public static ByteString zeros(final int length) {
@@ -142,8 +142,8 @@ public final class ByteStrings {
 	 * @param value  The value to fill the string with.
 	 * @param length  The number of bytes to have in the string.
 	 * @return  A {@link ByteString} {@code b} such that
-	 *   <code>b.{@link #at(int) at}(i) == (byte)value</code> for all
-	 *   {@code i} from 0 to {@code length - 1}.
+	 *   <code>b.{@link ByteString#at(int) at}(i) == (byte)value</code> for
+	 *   all {@code i} from 0 to {@code length - 1}.
 	 * @throws IllegalArgumentException  If {@code length < 0} or 
 	 *   {@code value} is not a valid signed or unsigned 8-bit integer.
 	 */
@@ -161,7 +161,8 @@ public final class ByteStrings {
 	 * Creates a new string by concatenating the given strings in order.
 	 * @param strings  The strings to concatenate.
 	 * @return  A {@link ByteString} equal to <code>strings[0].{@link
-	 *   #concat() concat}(strings[1].concat(strings[2] ...))</code>.
+	 *   ByteString#concat(ByteString) concat}(strings[1].concat(strings[2]
+	 *   ...))</code>.
 	 * @throws NullPointerException  If {@code strings} or any of its
 	 *   elements are null.
 	 */

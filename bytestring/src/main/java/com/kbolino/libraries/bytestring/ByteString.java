@@ -7,12 +7,12 @@ import java.nio.ReadOnlyBufferException;
 /**
  * An immutable string of bytes.
  * Analogous to {@link String} but for {@code byte}s instead of {@code char}s.
- * @see {@link ByteStrings} for obtaining strings
+ * @see ByteStrings
  */
 public interface ByteString {
 	/**
 	 * Returns the length of this string.
-	 * @return  The number of bytes in this {@code ByteString}.
+	 * @return  The number of bytes in this {@link ByteString}.
 	 */
 	public int length();
 
@@ -156,7 +156,6 @@ public interface ByteString {
 	 * @throws BufferOverflowException  If <code>buffer.{@link
 	 *   ByteBuffer#remaining() remaining()} &lt; length()</code>.
 	 * @throws ReadOnlyBufferException  If the buffer is read-only.
-	 * @see {@link ByteBuffer#put(byte[])}
 	 */
 	public int copyTo(ByteBuffer buffer) throws NullPointerException,
 			BufferOverflowException, ReadOnlyBufferException;
@@ -181,7 +180,6 @@ public interface ByteString {
 	 *   <code>buffer.{@link ByteBuffer#remaining() remaining()}
 	 *   &lt; length</code>.
 	 * @throws ReadOnlyBufferException  If the buffer is read-only.
-	 * @see {@link ByteBuffer#put(byte[])}
 	 */
 	public int copyTo(ByteBuffer buffer, int length) throws NullPointerException,
 			IllegalArgumentException, IndexOutOfBoundsException, BufferOverflowException,
@@ -264,7 +262,7 @@ public interface ByteString {
 	/**
 	 * Does this string contain a certain value?
 	 * @param value  The value to find.
-	 * @return  True if and only <code{@link #indexOf(byte) indexOf}(value)
+	 * @return  True if and only <code>{@link #indexOf(int) indexOf}(value)
 	 *   != -1</code>.
 	 * @throws IllegalArgumentException  If value is not in the range
 	 *   of a signed or unsigned 8-bit integer.
