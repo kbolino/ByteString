@@ -48,7 +48,7 @@ final class RopeByteString extends AbstractByteString {
 		checkAt(index);
 		int i = Arrays.binarySearch(offsets, index);
 		if (i < 0) {
-			i = -i - 1;
+			i = -i - 2;
 		}
 		return strings[i].at(index - offsets[i]);
 	}
