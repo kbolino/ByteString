@@ -34,7 +34,7 @@ final class Utils {
 	 * 
 	 * TODO performance tuning
 	 */
-	static final int ROPE_THRESHOLD = 1000;
+	static final int ROPE_THRESHOLD = 100;
 	
 	/**
 	 * Concatenates two strings.
@@ -68,10 +68,14 @@ final class Utils {
 			if (s1 instanceof RopeByteString) {
 				final RopeByteString rope = (RopeByteString) s1;
 				list.addAll(rope.strings());
+			} else {
+				list.add(s1);
 			}
 			if (s2 instanceof RopeByteString) {
 				final RopeByteString rope = (RopeByteString) s2;
 				list.addAll(rope.strings());
+			} else {
+				list.add(s2);
 			}
 			final ByteString[] strings = new ByteString[list.size()];
 			return new RopeByteString(list.toArray(strings));
@@ -81,10 +85,8 @@ final class Utils {
 	/**
 	 * The minimum length at which a substring should be constructed using
 	 * a slice instead of an array.
-	 * 
-	 * TODO performance tuning
 	 */
-	static final int SLICE_THRESHOLD = 100;
+	static final int SLICE_THRESHOLD = 5;
 	
 	/**
 	 * Creates a substring of a string.
