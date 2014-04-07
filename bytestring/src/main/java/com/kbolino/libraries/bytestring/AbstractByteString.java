@@ -11,6 +11,7 @@ abstract class AbstractByteString implements ByteString {
 	
 	/**
 	 * Checks parameters to {@link #checkAt(int)}.
+	 * @param index  The index.
 	 */
 	protected void checkAt(final int index) {
 		final int length = length();
@@ -23,6 +24,7 @@ abstract class AbstractByteString implements ByteString {
 	
 	/**
 	 * Checks parameters to {@link #subString(int)}.
+	 * @param beginIndex  The first index.
 	 */
 	protected void checkSubString(final int beginIndex) {
 		if (beginIndex < 0) {
@@ -39,6 +41,8 @@ abstract class AbstractByteString implements ByteString {
 	
 	/**
 	 * Checks parameters to {@link #subString(int, int)}.
+	 * @param beginIndex  The first index, inclusive.
+	 * @param endIndex  The last index, exclusive.
 	 */
 	protected void checkSubString(final int beginIndex, final int endIndex) {
 		if (beginIndex < 0) {
@@ -64,6 +68,9 @@ abstract class AbstractByteString implements ByteString {
 	
 	/**
 	 * Checks parameters to {@link #copyTo(byte[], int, int)}.
+	 * @param bytes  The array.
+	 * @param offset  The first index.
+	 * @param length  The number of bytes to copy.
 	 */
 	protected void checkCopyTo(final byte[] bytes, final int offset, final int length) {
 		Utils.checkCopyParams(bytes, offset, length);
@@ -75,6 +82,8 @@ abstract class AbstractByteString implements ByteString {
 	
 	/**
 	 * Checks parameters to {@link #copyTo(ByteBuffer, int)}.
+	 * @param buffer  The buffer.
+	 * @param length  The number of bytes to copy.
 	 */
 	protected void checkCopyTo(final ByteBuffer buffer, final int length) {
 		Utils.checkCopyParams(buffer, length);
@@ -86,6 +95,7 @@ abstract class AbstractByteString implements ByteString {
 	
 	/**
 	 * Checks parameters to {@code indexOf} methods.
+	 * @param fromIndex  The first index.
 	 */
 	protected void checkIndexOf(final int fromIndex) {
 		if (fromIndex < 0) {

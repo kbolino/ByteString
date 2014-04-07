@@ -4,6 +4,9 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Core utility methods for {@link ByteString}s.
+ */
 final class Utils {
 	/** The empty string. */
 	static final ByteString EMPTY_STRING = new EmptyByteString();
@@ -13,7 +16,7 @@ final class Utils {
 	
 	/**
 	 * Converts a signed or unsigned 8-bit integer into a byte.
-	 * @param  The value to convert.
+	 * @param value  The value to convert.
 	 * @return  A byte value equal to {@code (byte)value}.
 	 * @throws IllegalArgumentException  If
 	 *   <code>value &lt; {@link Byte#MIN_VALUE}</code> or
@@ -131,6 +134,9 @@ final class Utils {
 
 	/**
 	 * Checks parameters for copying to/from byte arrays.
+	 * @param bytes  The array.
+	 * @param offset  The first index within the array.
+	 * @param length  The number of bytes to copy.
 	 */
 	static void checkCopyParams(final byte[] bytes, final int offset, final int length) {
 		if (bytes == null) {
@@ -152,6 +158,8 @@ final class Utils {
 
 	/**
 	 * Checks parameters for copying to/from buffers.
+	 * @param buffer  The buffer.
+	 * @param length  The number of bytes to copy.
 	 */
 	static void checkCopyParams(final ByteBuffer buffer, final int length) {
 		if (buffer == null) {
