@@ -9,6 +9,11 @@ import java.util.Iterator;
  */
 public final class ByteStrings {
 	/**
+	 * The maximum value of an unsigned 8-bit integer.
+	 */
+	public static final int UNSIGNED_MAX = Utils.UNSIGNED_MAX;
+	
+	/**
 	 * Creates a new string from a byte array.
 	 * @param bytes  The array to copy from.
 	 * @return  A {@link ByteString} {@code b} such that
@@ -196,6 +201,78 @@ public final class ByteStrings {
 			string = string.concat(s);
 		}
 		return string;
+	}
+	
+	/**
+	 * Creates a new string from a sequence of consecutive byte values.
+	 * @param lower  The lower bound of the byte range, inclusive.
+	 * @param upper  The upper bound of the byte range, exclusive.
+	 * @return  A {@link ByteString} {@code b} such that
+	 *   <code>b.{@link ByteString#at(int) at}(i) == (byte)(lower + i)</code>
+	 *   for all {@code i} from 0 to {@code upper - lower}.
+	 * @throws IllegalArgumentException  If <code>lower &lt; {@link
+	 *   Byte#MIN_VALUE}</code> or <code>upper &gt; {@link Byte#MAX_VALUE}
+	 *   + 1</code> or {@code lower > upper}.
+	 */
+	public static ByteString range(final int lower, final int upper) throws IllegalArgumentException {
+		if (lower < Byte.MIN_VALUE) {
+			throw new IllegalArgumentException(
+					String.format("lower (%d) < Byte.MIN_VALUE (%d)", lower, Byte.MIN_VALUE));
+		} else if (upper > Byte.MAX_VALUE + 1) {
+			throw new IllegalArgumentException(
+					String.format("upper (%d) > Byte.MAX_VALUE (%d) + 1", upper, Byte.MAX_VALUE));
+		} else if (lower > upper) {
+			throw new IllegalArgumentException(String.format("lower (%d) > upper (%d)", lower, upper));
+		}
+		return new RangeByteString(lower, upper);
+	}
+	
+	/**
+	 * Creates a new string from a sequence of consecutive unsigned 8-bit
+	 * integer values.
+	 * @param lower  The lower bound of the range, inclusive.
+	 * @param upper  The upper bound of the range, exclusive.
+	 * @return  A {@link ByteString} {@code b} such that
+	 *   <code>b.{@link ByteString#at(int) at}(i) == (byte)(lower + i)</code>
+	 *   for all {@code i} from 0 to {@code upper - lower}.
+	 * @throws IllegalArgumentException  If <code>lower &lt; 0</code> or
+	 *   <code>upper &gt; {@link #UNSIGNED_MAX} + 1</code> or {@code lower
+	 *   > upper}.
+	 */
+	public static ByteString unsignedRange(final int lower, final int upper) throws IllegalArgumentException {
+		if (lower < 0) {
+			throw new IllegalArgumentException(String.format("lower (%d) < 0", lower));
+		} else if (upper > UNSIGNED_MAX + 1) {
+			throw new IllegalArgumentException(
+					String.format("upper (%d) > UNSIGNED_MAX (%d) + 1", upper, UNSIGNED_MAX));
+		} else if (lower > upper) {
+			throw new IllegalArgumentException(String.format("lower (%d) > upper (%d)", lower, upper));
+		}
+		return new RangeByteString(lower, upper);
+	}
+	
+	/**
+	 * Creates a new string by repeating another string.
+	 * @param string  The string to repeat.
+	 * @param times  The number of times to repeat the string.
+	 * @return  A {@link ByteString} {@code b} such that
+	 *   <code>b.{@link ByteString#at(int) at}(i) == string.at(i
+	 *   % string.length())</code> for all {@code i} from 0 to
+	 *   {@code string.length() * times}.
+	 * @throws NullPointerException  If {@code string == null}.
+	 * @throws IllegalArgumentException  If {@code times < 0}.
+	 */
+	public static ByteString repeat(final ByteString string, final int times)
+			throws NullPointerException, IllegalArgumentException {
+		if (string == null) {
+			throw new NullPointerException("string is null");
+		} else if (times < 0) {
+			throw new IllegalArgumentException(String.format("times (%d) < 0", times));
+		} else if (times == 0) {
+			return empty();
+		} else {
+			return new RepeatedByteString(string, times);
+		}
 	}
 	
 	private ByteStrings() { }
