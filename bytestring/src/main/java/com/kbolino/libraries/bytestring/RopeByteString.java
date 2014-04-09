@@ -79,7 +79,7 @@ final class RopeByteString extends AbstractByteString {
 		checkIndexOf(value, fromIndex);
 		final int s = findString(fromIndex);
 		for (int i = s; i < strings.length; i++) {
-			final ByteString string = strings[s];
+			final ByteString string = strings[i];
 			final int f = Math.max(fromIndex - offsets[i], 0);
 			final int index = string.indexOf(value, f);
 			if (index >= 0) {

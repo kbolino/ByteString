@@ -7,14 +7,12 @@ import org.junit.Test;
 
 public class UtilsTest {
 	final byte A = 10, B = 20;
-	ByteString s, s2;
+	ByteString s;
 	ByteString a, b, a2, b2;
 	
 	@Before
 	public void before() {
-		// TODO fix substring tests
-//		s = new ConstantByteString(A, Utils.SLICE_THRESHOLD);
-//		s2 = new ConstantByteString(A, Utils.SLICE_THRESHOLD * 2 + 1);
+		s = new ConstantByteString(A, 100);
 		
 		a = new ConstantByteString(A, Utils.ROPE_THRESHOLD / 2 - 1);
 		b = new ConstantByteString(B, Utils.ROPE_THRESHOLD / 2 - 1);
@@ -25,20 +23,18 @@ public class UtilsTest {
 	
 	@Test
 	public void testSubStringSmall() {
-//		ByteString sub = Utils.subString(s, 1, s.length() - 1);
-//		assertEquals(s.length() - 2, sub.length());
-//		for (int i = 1; i < s.length() - 1; i++) {
-//			assertEquals(s.at(i), sub.at(i - 1));
-//		}
+		ByteString s1 = s.subString(0, (int)(s.length() * Utils.SLICE_THRESHOLD) - 1);
+		for (int i = 0; i < s1.length(); i++) {
+			assertEquals(s.at(i), s1.at(i));
+		}
 	}
 	
 	@Test
 	public void testSubStringLarge() {
-//		ByteString sub = Utils.subString(s2, 1, s2.length() - 1);
-//		assertEquals(s2.length() - 2, sub.length());
-//		for (int i = 1; i < s2.length() - 1; i++) {
-//			assertEquals(s2.at(i), sub.at(i - 1));
-//		}
+		ByteString s2 = s.subString(0, (int)(s.length() * Utils.SLICE_THRESHOLD) + 1);
+		for (int i = 0; i < s2.length(); i++) {
+			assertEquals(s.at(i), s2.at(i));
+		}
 	}
 	
 	@Test

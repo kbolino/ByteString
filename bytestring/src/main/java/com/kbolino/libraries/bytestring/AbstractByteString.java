@@ -126,7 +126,7 @@ abstract class AbstractByteString implements ByteString {
 	public ByteString subString(int beginIndex) throws IllegalArgumentException,
 			IndexOutOfBoundsException {
 		checkSubString(beginIndex);
-		return subString(beginIndex, length() - beginIndex + 1);
+		return subString(beginIndex, length());
 	}
 	
 	/** {@inheritDoc} */
