@@ -33,5 +33,15 @@ class RepeatedByteString extends AbstractByteString {
 		checkAt(index);
 		return string.at(index % string.length());
 	}
+	
+	/** {@inheritDoc} */
+	@Override
+	public int indexOf(int value, int fromIndex)
+			throws IllegalArgumentException, IndexOutOfBoundsException {
+		checkIndexOf(value, fromIndex);
+		final int shifts = fromIndex / string.length();
+		final int shifted = fromIndex % string.length();
+		return string.indexOf(value, shifted) + shifts * string.length();
+	}
 
 }

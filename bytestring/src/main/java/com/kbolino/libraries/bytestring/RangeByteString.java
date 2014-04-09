@@ -35,5 +35,30 @@ class RangeByteString extends AbstractByteString {
 		checkAt(index);
 		return (byte)(lower + index);
 	}
+	
+	/** {@inheritDoc} */
+	@Override
+	public int indexOf(int value, int fromIndex)
+			throws IllegalArgumentException, IndexOutOfBoundsException {
+		checkIndexOf(value, fromIndex);
+		if (value >= fromIndex + lower && value < upper) {
+			return value - lower;
+		} else {
+			return -1;
+		}
+	}
+	
+	/** {@inheritDoc} */
+	@Override
+	public ByteString subString(int beginIndex, int endIndex)
+			throws IllegalArgumentException, IndexOutOfBoundsException {
+		checkSubString(beginIndex, endIndex);
+		if (beginIndex == endIndex) {
+			return Utils.EMPTY_STRING;
+		}
+		final int lower = this.lower + beginIndex;
+		final int upper = lower + (endIndex - beginIndex);
+		return new RangeByteString(lower, upper);
+	}
 
 }

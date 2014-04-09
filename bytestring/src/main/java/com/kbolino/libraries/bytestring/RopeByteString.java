@@ -37,6 +37,15 @@ final class RopeByteString extends AbstractByteString {
 		}
 		this.length = length;
 	}
+	
+	private int findString(final int index) {
+		final int i = Arrays.binarySearch(offsets, index);
+		if (i < 0) {
+			return -i - 2;
+		} else {
+			return i;
+		}
+	}
 
 	/** {@inheritDoc} */
 	public int length() {
@@ -46,11 +55,8 @@ final class RopeByteString extends AbstractByteString {
 	/** {@inheritDoc} */
 	public byte at(int index) throws IllegalArgumentException, IndexOutOfBoundsException {
 		checkAt(index);
-		int i = Arrays.binarySearch(offsets, index);
-		if (i < 0) {
-			i = -i - 2;
-		}
-		return strings[i].at(index - offsets[i]);
+		int s = findString(index);
+		return strings[s].at(index - offsets[s]);
 	}
 
 	/** {@inheritDoc} */
@@ -65,6 +71,22 @@ final class RopeByteString extends AbstractByteString {
 			lengthRemaining -= string.copyTo(buffer, copyLen);
 		}
 		return length;
+	}
+	
+	@Override
+	public int indexOf(int value, int fromIndex)
+			throws IllegalArgumentException, IndexOutOfBoundsException {
+		checkIndexOf(value, fromIndex);
+		final int s = findString(fromIndex);
+		for (int i = s; i < strings.length; i++) {
+			final ByteString string = strings[s];
+			final int f = Math.max(fromIndex - offsets[i], 0);
+			final int index = string.indexOf(value, f);
+			if (index >= 0) {
+				return index + offsets[i];
+			}
+		}
+		return -1;
 	}
 	
 	/**

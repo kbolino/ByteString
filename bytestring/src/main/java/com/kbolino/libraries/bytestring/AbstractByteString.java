@@ -94,7 +94,7 @@ abstract class AbstractByteString implements ByteString {
 	}
 	
 	/**
-	 * Checks parameters to {@code indexOf} methods.
+	 * Checks parameters to {@link #indexOf(int)} method.
 	 * @param fromIndex  The first index.
 	 */
 	protected void checkIndexOf(final int fromIndex) {
@@ -105,6 +105,16 @@ abstract class AbstractByteString implements ByteString {
 			throw new IndexOutOfBoundsException(
 					String.format("fromIndex (%d) >= length (%d)", fromIndex, length()));
 		}
+	}
+	
+	/**
+	 * Checks parameters to {@link #indexOf(int, int)} method.
+	 * @param value  The byte value.
+	 * @param fromIndex  The first index.
+	 */
+	protected void checkIndexOf(final int value, final int fromIndex) {
+		Utils.checkByteValue(value);
+		checkIndexOf(fromIndex);
 	}
 	
 	/** {@inheritDoc} */

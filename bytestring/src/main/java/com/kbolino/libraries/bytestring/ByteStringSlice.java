@@ -46,6 +46,14 @@ final class ByteStringSlice extends AbstractByteString {
 	}
 	
 	/** {@inheritDoc} */
+	@Override
+	public int indexOf(int value, int fromIndex)
+			throws IllegalArgumentException, IndexOutOfBoundsException {
+		checkIndexOf(value, fromIndex);
+		return delegate.indexOf(value, fromIndex + offset);
+	}
+	
+	/** {@inheritDoc} */
 	public ByteString subString(final int beginIndex, final int endIndex)
 			throws IllegalArgumentException, IndexOutOfBoundsException {
 		checkSubString(beginIndex, endIndex);

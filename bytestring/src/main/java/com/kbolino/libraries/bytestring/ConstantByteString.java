@@ -36,6 +36,19 @@ final class ConstantByteString extends AbstractByteString {
 		checkAt(index);
 		return value;
 	}
+	
+	/** {@inheritDoc} */
+	@Override
+	public int indexOf(int value, int fromIndex)
+			throws IllegalArgumentException, IndexOutOfBoundsException {
+		checkIndexOf(fromIndex);
+		final byte val = Utils.toByteValue(value);
+		if (val == this.value) {
+			return fromIndex;
+		} else {
+			return -1;
+		}
+	}
 
 	/** {@inheritDoc} */
 	public ByteString subString(int beginIndex, int endIndex)

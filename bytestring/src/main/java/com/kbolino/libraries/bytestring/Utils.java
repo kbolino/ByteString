@@ -15,6 +15,21 @@ final class Utils {
 	static final int UNSIGNED_MAX = 0xFF;
 	
 	/**
+	 * Checks the given value as a signed or unsigned 8-bit integer.
+	 * @param value  The value to check.
+	 * @throws IllegalArgumentException  If
+	 *   <code>value &lt; {@link Byte#MIN_VALUE}</code> or
+	 *   <code>value &gt; {@link #UNSIGNED_MAX}</code>.
+	 */
+	static void checkByteValue(int value) throws IllegalArgumentException {
+		if (value < Byte.MIN_VALUE) {
+			throw new IllegalArgumentException(String.format("value (%d) < minimum (%d)", value, Byte.MIN_VALUE));
+		} else if (value > UNSIGNED_MAX) {
+			throw new IllegalArgumentException(String.format("value (%d) > maximum (%d)", value, UNSIGNED_MAX));
+		}
+	}
+	
+	/**
 	 * Converts a signed or unsigned 8-bit integer into a byte.
 	 * @param value  The value to convert.
 	 * @return  A byte value equal to {@code (byte)value}.
@@ -22,12 +37,8 @@ final class Utils {
 	 *   <code>value &lt; {@link Byte#MIN_VALUE}</code> or
 	 *   <code>value &gt; {@link #UNSIGNED_MAX}</code>.
 	 */
-	static byte toByteValue(final int value) {
-		if (value < Byte.MIN_VALUE) {
-			throw new IllegalArgumentException(String.format("value (%d) < minimum (%d)", value, Byte.MIN_VALUE));
-		} else if (value > UNSIGNED_MAX) {
-			throw new IllegalArgumentException(String.format("value (%d) > maximum (%d)", value, UNSIGNED_MAX));
-		}
+	static byte toByteValue(final int value) throws IllegalArgumentException {
+		checkByteValue(value);
 		return (byte)value;
 	}
 	
@@ -86,10 +97,10 @@ final class Utils {
 	}
 	
 	/**
-	 * The minimum length at which a substring should be constructed using
-	 * a slice instead of an array.
+	 * The maximum ratio of slice size to total size at which a string
+	 * should be sliced instead of copied.
 	 */
-	static final int SLICE_THRESHOLD = 5;
+	static final float SLICE_THRESHOLD = 0.25f;
 	
 	/**
 	 * Creates a substring of a string.
@@ -113,7 +124,8 @@ final class Utils {
 			return EMPTY_STRING;
 		}
 		final int length = endIndex - beginIndex;
-		if (length < SLICE_THRESHOLD) {
+		final float ratio = length / (float)string.length();
+		if (ratio < SLICE_THRESHOLD) {
 			final byte[] bytes = new byte[length];
 			for (int i = 0; i < length; i++) {
 				bytes[i] = string.at(i + beginIndex);
