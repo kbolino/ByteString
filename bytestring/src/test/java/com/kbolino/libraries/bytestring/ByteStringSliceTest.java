@@ -7,14 +7,14 @@ import org.junit.Test;
 
 public class ByteStringSliceTest {
 	ByteString b1;
-	ByteStringSlice s1, s2, s0;
+	SlicedByteString s1, s2, s0;
 	
 	@Before
 	public void before() {
 		b1 = new ArrayByteString(new byte[]{10, 12, 14, 16, 18, 20, 22, 24});
-		s1 = new ByteStringSlice(b1, 4, 2);
-		s2 = new ByteStringSlice(b1, 2, 4);
-		s0 = new ByteStringSlice(b1, 2, 2);
+		s1 = new SlicedByteString(b1, 4, 2);
+		s2 = new SlicedByteString(b1, 2, 4);
+		s0 = new SlicedByteString(b1, 2, 2);
 	}
 	
 	@Test

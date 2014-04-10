@@ -1,8 +1,6 @@
 package com.kbolino.libraries.bytestring;
 
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Core utility methods for {@link ByteString}s.
@@ -41,108 +39,6 @@ final class Utils {
 		checkByteValue(value);
 		return (byte)value;
 	}
-	
-	/**
-	 * The minimum total length at which two or more strings should be roped
-	 * together instead of coalesced.
-	 * 
-	 * TODO performance tuning
-	 */
-	static final int ROPE_THRESHOLD = 100;
-	
-	/**
-	 * Concatenates two strings.
-	 * Coalesces small strings and ropes together large strings at least
-	 * {@link #ROPE_THRESHOLD} in length.
-	 * Preconditions:
-	 * <ol>
-	 *   <li>{@code s1 != null}</li>
-	 *   <li>{@code s2 != null}</li>
-	 * </ol>
-	 * @param s1  The first string.
-	 * @param s2  The second string.
-	 * @return  A {@link ByteString} containing the concatenation of
-	 *   {@code s1} and {@code s2}.
-	 */
-	static ByteString concat(final ByteString s1, final ByteString s2) {
-		if (s1.length() == 0) {
-			return s2;
-		} else if (s2.length() == 0) {
-			return s1;
-		}
-		final int totalLength = s1.length() + s2.length();
-		if (totalLength < ROPE_THRESHOLD) {
-			byte[] bytes = new byte[totalLength];
-			s1.copyTo(bytes);
-			s2.copyTo(bytes, s1.length());
-			return new ArrayByteString(bytes);
-		} else {
-			// don't rope ropes
-			final List<ByteString> list = new ArrayList<ByteString>();
-			if (s1 instanceof RopeByteString) {
-				final RopeByteString rope = (RopeByteString) s1;
-				list.addAll(rope.strings());
-			} else {
-				list.add(s1);
-			}
-			if (s2 instanceof RopeByteString) {
-				final RopeByteString rope = (RopeByteString) s2;
-				list.addAll(rope.strings());
-			} else {
-				list.add(s2);
-			}
-			final ByteString[] strings = new ByteString[list.size()];
-			return new RopeByteString(list.toArray(strings));
-		}
-	}
-	
-	/**
-	 * The maximum ratio of slice size to total size at which a string
-	 * should be sliced instead of copied.
-	 */
-	static final float SLICE_THRESHOLD = 0.25f;
-	
-	/**
-	 * Creates a substring of a string.
-	 * Uses an array for small substrings and a slice for large strings
-	 * at least {@link #SLICE_THRESHOLD} in length.
-	 * Preconditions:
-	 * <ol>
-	 *   <li>{@code string != null}</li>
-	 *   <li>{@code beginIndex >= 0}</li>
-	 *   <li>{@code endIndex >= beginIndex}</li>
-	 *   <li>{@code endIndex <= string.length()}</li>
-	 * </ol>
-	 * @param string  The string.
-	 * @param beginIndex  The first index, inclusive.
-	 * @param endIndex  The last index, exclusive.
-	 * @return  A substring of {@code string} from {@code beginIndex} to
-	 *   {@code endIndex}.
-	 */
-	static ByteString subString(final ByteString string, final int beginIndex, final int endIndex) {
-		if (string.length() == 0 || beginIndex == endIndex) {
-			return EMPTY_STRING;
-		}
-		final int length = endIndex - beginIndex;
-		final float ratio = length / (float)string.length();
-		if (ratio < SLICE_THRESHOLD) {
-			final byte[] bytes = new byte[length];
-			for (int i = 0; i < length; i++) {
-				bytes[i] = string.at(i + beginIndex);
-			}
-			return new ArrayByteString(bytes);
-		} else {
-			// don't slice slices
-			ByteString delegate = string;
-			int offset = beginIndex;
-			if (string instanceof ByteStringSlice) {
-				final ByteStringSlice slice = (ByteStringSlice) string;
-				delegate = slice.delegate();
-				offset += slice.offset();
-			}
-			return new ByteStringSlice(delegate, offset, length);
-		}
-	}
 
 	/**
 	 * Checks parameters for copying to/from byte arrays.
@@ -179,6 +75,34 @@ final class Utils {
 		} else if (length < 0) {
 			throw new IllegalArgumentException(
 					String.format("length (%d) < 0", length));
+		}
+	}
+	
+	/**
+	 * Checks parameters for substring methods.
+	 * @param string  The string.
+	 * @param beginIndex  The first index, inclusive.
+	 * @param endIndex  The last index, exclusive.
+	 */
+	static void checkSubString(ByteString string, int beginIndex, int endIndex) {
+		if (beginIndex < 0) {
+			throw new IllegalArgumentException(
+					String.format("beginIndex (%d) < 0", beginIndex));
+		} else if (endIndex < 0) {
+			throw new IllegalArgumentException(
+					String.format("endIndex (%d) < 0", endIndex));
+		} else if (beginIndex > endIndex) {
+			throw new IllegalArgumentException(
+					String.format("beginIndex (%d) > endIndex (%d)", beginIndex, endIndex));
+		} else {
+			final int length = string.length();
+			if (length > 0 && beginIndex >= length) {
+				throw new IndexOutOfBoundsException(
+						String.format("beginIndex (%d) >= length (%d)", beginIndex, length));
+			} else if (endIndex > length) {
+				throw new IndexOutOfBoundsException(
+						String.format("endIndex (%d) > length (%d)", endIndex, length));
+			}
 		}
 	}
 	

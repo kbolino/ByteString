@@ -84,6 +84,23 @@ public interface ByteString {
 	public ByteBuffer toByteBuffer();
 	
 	/**
+	 * Creates a read-only buffer from this string.
+	 * The buffer's {@linkplain ByteBuffer#position() position} will be 0,
+	 * its capacity will be {@link #length()}, and its limit will be equal
+	 * to its capacity.
+	 * 
+	 * <p>This method may be more efficient for some types of
+	 * {@link ByteString}s since it does not require a copy of the string's
+	 * content to be made.
+	 * 
+	 * @return A read-only {@link ByteBuffer} {@code b} such that
+	 *   <code>b.{@link ByteBuffer#get() get}(i) ==
+	 *   this.{@link #at(int) at}(i)</code> for all {@code i} from 0
+	 *   to {@code this.length() - 1}.
+	 */
+	public ByteBuffer toReadOnlyByteBuffer();
+	
+	/**
 	 * Creates an array from this string.
 	 * @return  A byte array {@code b} such that
 	 *   <code>b[i] == this.{@link #at(int) at}(i)</code> for all

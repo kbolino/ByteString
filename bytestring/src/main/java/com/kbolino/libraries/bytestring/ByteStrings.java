@@ -2,6 +2,7 @@ package com.kbolino.libraries.bytestring;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 
 /**
@@ -13,6 +14,17 @@ public final class ByteStrings {
 	 */
 	public static final int UNSIGNED_MAX = Utils.UNSIGNED_MAX;
 	
+	public static ByteStringBuilder builder() {
+		return builder(10);
+	}
+	
+	public static ByteStringBuilder builder(final int initialCapacity) {
+		if (initialCapacity < 0) {
+			throw new IllegalArgumentException(String.format("initialCapacity (%d) < 0", initialCapacity));
+		}
+		return new ByteStringBuilder(initialCapacity);
+	}
+	
 	/**
 	 * Creates a new string from a byte array.
 	 * @param bytes  The array to copy from.
@@ -21,7 +33,7 @@ public final class ByteStrings {
 	 *   {@code i} from 0 to {@code bytes.length}.
 	 * @throws NullPointerException  If {@code bytes} is null.
 	 */
-	public static ByteString copyFrom(byte[] bytes) throws NullPointerException {
+	public static ByteString copyFrom(final byte[] bytes) throws NullPointerException {
 		return copyFrom(bytes, 0, bytes.length);
 	}
 	
@@ -39,7 +51,7 @@ public final class ByteStrings {
 	 * @throws IndexOutOfBoundsException  If {@code offset >= bytes.length}
 	 *   or {@code length > bytes.length - offset}.
 	 */
-	public static ByteString copyFrom(byte[] bytes, int offset, int length) {
+	public static ByteString copyFrom(final byte[] bytes, final int offset, final int length) {
 		Utils.checkCopyParams(bytes, offset, length);
 		if (length == 0) {
 			return empty();
@@ -60,7 +72,7 @@ public final class ByteStrings {
 	 *   {@code i} from {@code buffer.position()} (initially) to
 	 *   {@code buffer.limit()}.
 	 */
-	public static ByteString copyFrom(ByteBuffer buffer) {
+	public static ByteString copyFrom(final ByteBuffer buffer) {
 		return copyFrom(buffer, buffer.remaining());
 	}
 	
@@ -76,7 +88,7 @@ public final class ByteStrings {
 	 *   {@code i} from {@code buffer.position()} (initially) to
 	 *   {@code buffer.position() - 1} (after).
 	 */
-	public static ByteString copyFrom(ByteBuffer buffer, int length) {
+	public static ByteString copyFrom(final ByteBuffer buffer, final int length) {
 		Utils.checkCopyParams(buffer, length);
 		if (length == 0) {
 			return empty();
@@ -170,6 +182,7 @@ public final class ByteStrings {
 	 *   ...))</code>.
 	 * @throws NullPointerException  If {@code strings} or any of its
 	 *   elements are null.
+	 * @see #rope(ByteString...)
 	 */
 	public static ByteString concat(final ByteString... strings) throws NullPointerException {
 		if (strings == null) {
@@ -186,6 +199,7 @@ public final class ByteStrings {
 	 *   elements of {@code strings}.
 	 * @throws NullPointerException  If {@code strings} or any of its
 	 *   elements are null.
+	 * @see #rope(Collection)
 	 */
 	public static ByteString concat(final Iterable<ByteString> strings) throws NullPointerException {
 		if (strings == null) {
@@ -273,6 +287,46 @@ public final class ByteStrings {
 		} else {
 			return new RepeatedByteString(string, times);
 		}
+	}
+	
+	public static ByteString rope(final ByteString... strings) throws NullPointerException{
+		if (strings == null) {
+			throw new NullPointerException("strings is null");
+		} else {
+			return rope(Arrays.asList(strings));
+		}
+	}
+	
+	public static ByteString rope(final Collection<ByteString> strings) throws NullPointerException {
+		if (strings == null) {
+			throw new NullPointerException("strings is null");
+		} else if (strings.size() == 0) {
+			return empty();
+		} else {
+			// TODO remove empty strings from collection?
+			// TODO don't rope ropes
+			final ByteString[] array = new ByteString[strings.size()];
+			return new RopeByteString(strings.toArray(array)); 
+		}
+	}
+	
+	public static ByteString slice(final ByteString string, int beginIndex)
+			throws NullPointerException, IllegalArgumentException, IndexOutOfBoundsException {
+		if (string == null) {
+			throw new NullPointerException("string is null");
+		}
+		return slice(string, beginIndex, string.length());
+	}
+	
+	public static ByteString slice(final ByteString string, int beginIndex, int endIndex)
+			throws NullPointerException, IllegalArgumentException, IndexOutOfBoundsException
+	{
+		Utils.checkSubString(string, beginIndex, endIndex);
+		if (endIndex == beginIndex) {
+			return empty();
+		}
+		// TODO don't slice slices
+		return new SlicedByteString(string, beginIndex, endIndex - beginIndex);
 	}
 	
 	private ByteStrings() { }

@@ -1,6 +1,5 @@
 package com.kbolino.libraries.bytestring;
 
-
-public class UtilsTest {
+public class ByteStringBuilderTest {
 	// TODO
 }

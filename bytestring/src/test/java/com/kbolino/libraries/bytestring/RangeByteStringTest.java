@@ -6,7 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class RangeByteStringTest {
-	RangeByteString small, large, first, last;
+	RangeByteString small, large, first, last, signed;
 	
 	@Before
 	public void before() {
@@ -14,6 +14,7 @@ public class RangeByteStringTest {
 		first = new RangeByteString(0, 128);
 		last = new RangeByteString(128, 256);
 		large = new RangeByteString(0, 256);
+		signed = new RangeByteString(-128, 128);
 	}
 	
 	@Test
@@ -28,6 +29,10 @@ public class RangeByteStringTest {
 		assertEquals(20, small.at(10));
 		assertEquals(0, large.at(0));
 		assertEquals(-1, large.at(255));
+		assertEquals(-128, signed.at(0));
+		assertEquals(-1, signed.at(127));
+		assertEquals(0, signed.at(128));
+		assertEquals(127, signed.at(255));
 	}
 	
 	@Test
@@ -36,11 +41,18 @@ public class RangeByteStringTest {
 		assertEquals(20, small.unsignedAt(10));
 		assertEquals(0, large.unsignedAt(0));
 		assertEquals(255, large.unsignedAt(255));
+		assertEquals(128, signed.unsignedAt(0));
+		assertEquals(255, signed.unsignedAt(127));
+		assertEquals(0, signed.unsignedAt(128));
+		assertEquals(127, signed.unsignedAt(255));
 	}
 	
 	@Test
 	public void testSubString() {
 		assertEquals(small, large.subString(10, 21));
+		assertEquals(small, signed.subString(138, 149));
+		assertEquals(last, signed.subString(0, 128));
+		assertEquals(first, signed.subString(128));
 	}
 	
 	@Test
@@ -50,6 +62,10 @@ public class RangeByteStringTest {
 		assertEquals(5, small.indexOf(15, 5));
 		assertEquals(-1, small.indexOf(15, 6));
 		assertEquals(0, large.indexOf(Utils.EMPTY_STRING));
+		assertEquals(255, large.indexOf(255));
+		assertEquals(127, signed.indexOf(-1));
+		// TODO --correct behavior?
+		// assertEquals(-1, signed.indexOf(255)); 
 	}
 	
 	@Test
@@ -64,6 +80,7 @@ public class RangeByteStringTest {
 	public void testConcat() {
 		assertEquals(small, small.concat(Utils.EMPTY_STRING));
 		assertEquals(large, first.concat(last));
+		assertEquals(signed, last.concat(first));
 	}
 	
 	@Test

@@ -45,25 +45,7 @@ abstract class AbstractByteString implements ByteString {
 	 * @param endIndex  The last index, exclusive.
 	 */
 	protected void checkSubString(final int beginIndex, final int endIndex) {
-		if (beginIndex < 0) {
-			throw new IllegalArgumentException(
-					String.format("beginIndex (%d) < 0", beginIndex));
-		} else if (endIndex < 0) {
-			throw new IllegalArgumentException(
-					String.format("endIndex (%d) < 0", endIndex));
-		} else if (beginIndex > endIndex) {
-			throw new IllegalArgumentException(
-					String.format("beginIndex (%d) > endIndex (%d)", beginIndex, endIndex));
-		} else {
-			final int length = length();
-			if (length > 0 && beginIndex >= length) {
-				throw new IndexOutOfBoundsException(
-						String.format("beginIndex (%d) >= length (%d)", beginIndex, length));
-			} else if (endIndex > length) {
-				throw new IndexOutOfBoundsException(
-						String.format("endIndex (%d) > length (%d)", endIndex, length));
-			}
-		}
+		Utils.checkSubString(this, beginIndex, endIndex);
 	}
 	
 	/**
@@ -133,7 +115,11 @@ abstract class AbstractByteString implements ByteString {
 	public ByteString subString(int beginIndex, int endIndex)
 			throws IllegalArgumentException, IndexOutOfBoundsException {
 		checkSubString(beginIndex, endIndex);
-		return Utils.subString(this, beginIndex, endIndex);
+		if (endIndex == beginIndex) {
+			return Utils.EMPTY_STRING;
+		} else {
+			return ArrayByteString.subString(this, beginIndex, endIndex);
+		}
 	}
 	
 	/** {@inheritDoc} */
@@ -149,6 +135,11 @@ abstract class AbstractByteString implements ByteString {
 		copyTo(buffer);
 		buffer.rewind();
 		return buffer;
+	}
+	
+	/** {@inheritDoc} */
+	public ByteBuffer toReadOnlyByteBuffer() {
+		return toByteBuffer().asReadOnlyBuffer();
 	}
 	
 	/** {@inheritDoc} */
@@ -274,8 +265,13 @@ abstract class AbstractByteString implements ByteString {
 	public ByteString concat(final ByteString string) throws NullPointerException {
 		if (string == null) {
 			throw new NullPointerException("string is null");
+		} else if (string.length() == 0) {
+			return this;
+		} else if (length() == 0) {
+			return string;
+		} else {
+			return ArrayByteString.concat(this, string);
 		}
-		return Utils.concat(this, string);
 	}
 	
 	/** {@inheritDoc} */

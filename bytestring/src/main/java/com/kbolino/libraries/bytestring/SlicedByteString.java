@@ -6,16 +6,16 @@ package com.kbolino.libraries.bytestring;
  * A slice is composed from another string and appears to be a substring of
  * that string, without copying it.
  */
-final class ByteStringSlice extends AbstractByteString {
+final class SlicedByteString extends AbstractByteString {
 	private final ByteString delegate;
 	private final int offset;
 	private final int length;
 	
 	/**
-	 * Creates a new {@link ByteStringSlice}.  Constructor preconditions:
+	 * Creates a new {@link SlicedByteString}.  Constructor preconditions:
 	 * <ol>
 	 *   <li>{@code delegate != null}</li>
-	 *   <li>{@code delegate} is not itself a {@link ByteStringSlice}</li>
+	 *   <li>{@code delegate} is not itself a {@link SlicedByteString}</li>
 	 *   <li>{@code offset >= 0}</li>
 	 *   <li>{@code offset < delegate.length()}</li>
 	 *   <li>{@code length >= 0}</li>
@@ -27,7 +27,7 @@ final class ByteStringSlice extends AbstractByteString {
 	 * @param length  The number of contiguous bytes accessible from
 	 *   {@code delegate}, starting with the byte at {@code offset}.
 	 */
-	ByteStringSlice(final ByteString delegate, final int offset, final int length) {
+	SlicedByteString(final ByteString delegate, final int offset, final int length) {
 		this.delegate = delegate;
 		this.offset = offset;
 		this.length = length;
