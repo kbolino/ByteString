@@ -100,6 +100,11 @@ abstract class AbstractByteString implements ByteString {
 	}
 	
 	/** {@inheritDoc} */
+	public boolean isEmpty() {
+		return length() == 0;
+	}
+	
+	/** {@inheritDoc} */
 	public int unsignedAt(final int index) {
 		return at(index) & 0xFF;
 	}

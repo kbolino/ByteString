@@ -15,6 +15,12 @@ public interface ByteString {
 	 * @return  The number of bytes in this {@link ByteString}.
 	 */
 	public int length();
+	
+	/**
+	 * Is this string empty?
+	 * @return  True if and only if <code>{@link #length()} == 0</code>.
+	 */
+	public boolean isEmpty();
 
 	/**
 	 * Returns the value at the given index.
@@ -38,33 +44,37 @@ public interface ByteString {
 	
 	/**
 	 * Creates a substring of this string.
+	 * The relevant portion of the string may be copied in the process.
 	 * @param beginIndex  The index of the first byte in the substring,
 	 *   inclusive.
 	 * @return  A {@link ByteString} {@code b} such that
-	 *   <code>b.{@link #at(int) at}(i) == this.at(i)</code> for all
-	 *   {@code i} from {@code beginIndex} to
-	 *   <code>{@link #length()} - 1</code>.
+	 *   <code>b.{@link #at(int) at}(i) == this.at(i + beginIndex)</code> for
+	 *   all {@code i} from 0 to <code>{@link #length()} - beginIndex
+	 *   - 1</code>.
 	 * @throws IllegalArgumentException  If {@code beginIndex < 0}.
 	 * @throws IndexOutOfBoundsException  If
-	 * <code>beginIndex &gt;= {@link #length()}</code>.
+	 *   <code>beginIndex &gt;= {@link #length()}</code>.
+	 * @see ByteStrings#slice(ByteString, int)
 	 */
 	public ByteString subString(int beginIndex)
 			throws IllegalArgumentException, IndexOutOfBoundsException;
 	
 	/**
 	 * Creates a substring of this string.
+	 * The relevant portion of the string may be copied in the process.
 	 * @param beginIndex  The index of the first byte in the substring,
 	 *   inclusive.
 	 * @param endIndex  The index of the last byte in the substring,
 	 *   exclusive.
 	 * @return  A {@link ByteString} {@code b} such that
-	 *   <code>b.{@link #at(int) at}(i) == this.at(i)</code> for all
-	 *   {@code i} from {@code beginIndex} to {@code endIndex - 1}.
+	 *   <code>b.{@link #at(int) at}(i) == this.at(i + beginIndex)</code> for
+	 *   all {@code i} from 0 to {@code endIndex - beginIndex - 1}.
 	 * @throws IllegalArgumentException  If {@code beginIndex < 0},
 	 *   {@code endIndex < 0}, or {@code beginIndex > endIndex}.
 	 * @throws IndexOutOfBoundsException  If
-	 * <code>beginIndex &gt;= {@link #length()}</code> or
-	 * <code>endIndex &gt; length()</code>.
+	 *   <code>beginIndex &gt;= {@link #length()}</code> or
+	 *   <code>endIndex &gt; length()</code>.
+	 * @see ByteStrings#slice(ByteString, int, int)
 	 */
 	public ByteString subString(int beginIndex, int endIndex)
 			throws IllegalArgumentException, IndexOutOfBoundsException;
@@ -212,6 +222,8 @@ public interface ByteString {
 	 *   <code>this.length()</code> to <code>this.length() +
 	 *   string.length() - 1</code>.
 	 * @throws NullPointerException  If {@code string} is null.
+	 * @see ByteStrings#concat(ByteString[])
+	 * @see ByteStrings#rope(ByteString[])
 	 */
 	public ByteString concat(ByteString string) throws NullPointerException;
 	

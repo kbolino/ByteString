@@ -14,11 +14,22 @@ public final class ByteStrings {
 	 */
 	public static final int UNSIGNED_MAX = Utils.UNSIGNED_MAX;
 	
+	/**
+	 * Creates a new string builder.
+	 * @return  A {@link ByteStringBuilder} with an initial capacity of 10.
+	 */
 	public static ByteStringBuilder builder() {
 		return builder(10);
 	}
 	
-	public static ByteStringBuilder builder(final int initialCapacity) {
+	/**
+	 * Creates a new string builder.
+	 * @param initialCapacity  The initial capacity of the builder.
+	 * @return  A {@link ByteStringBuilder} with the given initial capacity.
+	 * @throws IllegalArgumentException  If {@code initialCapacity < 0}.
+	 */
+	public static ByteStringBuilder builder(final int initialCapacity)
+			throws IllegalArgumentException {
 		if (initialCapacity < 0) {
 			throw new IllegalArgumentException(String.format("initialCapacity (%d) < 0", initialCapacity));
 		}
@@ -176,13 +187,14 @@ public final class ByteStrings {
 	
 	/**
 	 * Creates a new string by concatenating the given strings in order.
+	 * The strings may be copied in the process.
 	 * @param strings  The strings to concatenate.
 	 * @return  A {@link ByteString} equal to <code>strings[0].{@link
 	 *   ByteString#concat(ByteString) concat}(strings[1].concat(strings[2]
 	 *   ...))</code>.
 	 * @throws NullPointerException  If {@code strings} or any of its
 	 *   elements are null.
-	 * @see #rope(ByteString...)
+	 * @see #rope(ByteString[])
 	 */
 	public static ByteString concat(final ByteString... strings) throws NullPointerException {
 		if (strings == null) {
@@ -194,6 +206,7 @@ public final class ByteStrings {
 	
 	/**
 	 * Creates a new string by concatenating the given strings in order.
+	 * The strings may be copied in the process.
 	 * @param strings  The strings to concatenate.
 	 * @return  A {@link ByteString} equal to the concatenation of the
 	 *   elements of {@code strings}.
@@ -289,6 +302,19 @@ public final class ByteStrings {
 		}
 	}
 	
+	/**
+	 * Concatenates multiple strings as a rope.
+	 * A rope is more efficient than {@linkplain ByteString#concat(ByteString)
+	 * ordinary concatenation} for large strings,
+	 * since it does not involve copying the contents of the strings.
+	 * @param strings  The strings to rope together.
+	 * @return  A {@link ByteString} equal to the concatenation of the
+	 *   elements of {@code strings} in order.
+	 * @throws NullPointerException  If {@code strings} or any of its
+	 *   elements are null.
+	 * @see #concat(ByteString[])
+	 * @see #rope(Collection)
+	 */
 	public static ByteString rope(final ByteString... strings) throws NullPointerException{
 		if (strings == null) {
 			throw new NullPointerException("strings is null");
@@ -297,6 +323,18 @@ public final class ByteStrings {
 		}
 	}
 	
+	/**
+	 * Concatenates multiple strings as a rope.
+	 * A rope is more efficient than ordinary concatenation for large
+	 * strings, since it does not involve copying the contents of the strings.
+	 * @param strings  The strings to rope together.
+	 * @return  A {@link ByteString} equal to the concatenation of the
+	 *   elements of {@code strings} in order.
+	 * @throws NullPointerException  If {@code strings} or any of its
+	 *   elements are null.
+	 * @see #concat(Iterable)
+	 * @see #rope(ByteString[])
+	 */
 	public static ByteString rope(final Collection<ByteString> strings) throws NullPointerException {
 		if (strings == null) {
 			throw new NullPointerException("strings is null");
@@ -304,12 +342,30 @@ public final class ByteStrings {
 			return empty();
 		} else {
 			// TODO remove empty strings from collection?
+			// TODO check for null strings in array
 			// TODO don't rope ropes
 			final ByteString[] array = new ByteString[strings.size()];
 			return new RopeByteString(strings.toArray(array)); 
 		}
 	}
 	
+	/**
+	 * Creates a substring of a string by slicing it.
+	 * A slice is more efficient than an ordinary substring since it does
+	 * not involve copying the original string.
+	 * @param string  The string to slice.
+	 * @param beginIndex  The index of the first byte in the slice.
+	 * @return  A {@link ByteString} {@code b} such that
+	 *   <code>b.{@link ByteString#at(int) at}(i) == string.at(i
+	 *   + beginIndex)</code> for all {@code i} from 0 to <code>string.{@link
+	 *   ByteString#length() length()} - beginIndex - 1</code>.
+	 * @throws NullPointerException  If {@code string == null}.
+	 * @throws IllegalArgumentException  If {@code beginIndex < 0}.
+	 * @throws IndexOutOfBoundsException  If {@code beginIndex >=
+	 *   string.length()}.
+	 * @see ByteString#subString(int)
+	 * @see #slice(ByteString, int, int)
+	 */
 	public static ByteString slice(final ByteString string, int beginIndex)
 			throws NullPointerException, IllegalArgumentException, IndexOutOfBoundsException {
 		if (string == null) {
@@ -318,6 +374,27 @@ public final class ByteStrings {
 		return slice(string, beginIndex, string.length());
 	}
 	
+	/**
+	 * Creates a substring of a string by slicing it.
+	 * A slice is more efficient than an ordinary substring since it does
+	 * not involve copying the original string.
+	 * @param string  The string to slice.
+	 * @param beginIndex  The index of the first byte to include in the slice.
+	 * @param endIndex  The index of the first byte after {@code beginIndex}
+	 *   to exclude from the slice.
+	 * @return  A {@link ByteString} {@code b} such that
+	 *   <code>b.{@link ByteString#at(int) at}(i) == string.at(i
+	 *   + beginIndex)</code> for all {@code i} from 0 to
+	 *   {@code endIndex - beginIndex - 1}.
+	 * @throws NullPointerException  If {@code string == null}.
+	 * @throws IllegalArgumentException  If {@code beginIndex < 0},
+	 *   {@code endIndex < 0}, or {@code beginIndex > endIndex}.
+	 * @throws IndexOutOfBoundsException  If <code>beginIndex &gt;=
+	 *   string.{@link ByteString#length() length()}</code> or
+	 *   {@code endIndex > string.length()}.
+	 * @see ByteString#subString(int, int)
+	 * @see #slice(ByteString, int)
+	 */
 	public static ByteString slice(final ByteString string, int beginIndex, int endIndex)
 			throws NullPointerException, IllegalArgumentException, IndexOutOfBoundsException
 	{

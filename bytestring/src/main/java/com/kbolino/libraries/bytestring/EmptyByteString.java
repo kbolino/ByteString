@@ -17,6 +17,12 @@ final class EmptyByteString extends AbstractByteString {
 	public int length() {
 		return 0;
 	}
+	
+	/** {@inheritDoc} */
+	@Override
+	public boolean isEmpty() {
+		return true;
+	}
 
 	/** {@inheritDoc} */
 	public byte at(final int index) throws IllegalArgumentException, IndexOutOfBoundsException {

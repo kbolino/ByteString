@@ -10,7 +10,19 @@ import java.nio.ReadOnlyBufferException;
 final class ArrayByteString extends AbstractByteString {
 	private final byte[] bytes;
 	
-	static ArrayByteString concat(ByteString b1, ByteString b2) {
+	/**
+	 * Concatenate two strings into a new {@link ArrayByteString}.  Preconditions:
+	 * <ol>
+	 *   <li>{@code b1 != null}</li>
+	 *   <li>{@code b2 != null}</li>
+	 *   <li>Preferably, neither {@code b1.length() == 0} nor 
+	 *     {@code b2.length() == 0}</li>
+	 * </ol>
+	 * @param b1  The first string.
+	 * @param b2  The second string.
+	 * @return  An {@link ArrayByteString} equal to {@code b1 + b2}.
+	 */
+	static ArrayByteString concat(final ByteString b1, final ByteString b2) {
 		final int totalLength = b1.length() + b2.length();
 		final byte[] bytes = new byte[totalLength];
 		b1.copyTo(bytes);
@@ -18,7 +30,23 @@ final class ArrayByteString extends AbstractByteString {
 		return new ArrayByteString(bytes);
 	}
 	
-	static ArrayByteString subString(ByteString string, int beginIndex, int endIndex) {
+	/**
+	 * Create a substring in a new {@link ArrayByteString}.  Preconditions:
+	 * <ol>
+	 *   <li>{@code string != null}</li>
+	 *   <li>{@code beginIndex >= 0}</li>
+	 *   <li>{@code endIndex >= beginIndex}</li>
+	 *   <li>{@code beginIndex < string.length()}</li>
+	 *   <li>{@code endIndex <= string.length()}</li>
+	 *   <li>Preferably, {@code endIndex - beginIndex > 0}</li>
+	 * </ol>
+	 * @param string  The string.
+	 * @param beginIndex  The first index, inclusive.
+	 * @param endIndex  The last index, exclusive.
+	 * @return  An {@link ArrayByteString} equal to
+	 *   {@code string[beginIndex:endIndex]}.
+	 */
+	static ArrayByteString subString(final ByteString string, final int beginIndex, final int endIndex) {
 		final int length = endIndex - beginIndex;
 		final byte[] bytes = new byte[length];
 		string.copyTo(bytes, beginIndex, length);
