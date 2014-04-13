@@ -215,11 +215,16 @@ public abstract class AbstractByteString implements ByteString {
 		for (int i = fromIndex; i < length; i++) {
 			if (i + strLen > length) {
 				return -1;
-			} else {
-				final ByteString sub = subString(i, i + strLen);
-				if (string.equals(sub)) {
-					return i;
+			}
+			boolean equal = true;
+			for (int j = 0; j < strLen; j++) {
+				if (string.at(j) != at(i + j)) {
+					equal = false;
+					break;
 				}
+			}
+			if (equal) {
+				return i;
 			}
 		}
 		return -1;
