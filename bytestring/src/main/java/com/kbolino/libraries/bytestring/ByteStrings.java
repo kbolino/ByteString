@@ -37,6 +37,25 @@ public final class ByteStrings {
 	}
 	
 	/**
+	 * Creates a new string builder from an existing string.
+	 * @param string  The string to copy into the builder.
+	 * @return  A {@link ByteStringBuilder} {@code b} such that
+	 *   <code>b.{@link ByteStringBuilder#at(int) at}(i) == string.{@link
+	 *   ByteString#at(int) at}(i)</code> for all {@code i} from 0 to
+	 *   <code>string.{@link ByteString#length() length()} - 1</code>.
+	 * @throws NullPointerException  If {@code string == null}.
+	 */
+	public static ByteStringBuilder builder(final ByteString string)
+			throws NullPointerException {
+		if (string == null) {
+			throw new NullPointerException("string is null");
+		}
+		final ByteStringBuilder builder = new ByteStringBuilder(string.length());
+		builder.append(string);
+		return builder;
+	}
+	
+	/**
 	 * Creates a new string from a byte array.
 	 * @param bytes  The array to copy from.
 	 * @return  A {@link ByteString} {@code b} such that
