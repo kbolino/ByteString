@@ -70,11 +70,6 @@ public class EmptyByteStringTest {
 	}
 	
 	@Test
-	public void testConcat() {
-		assertEquals(e, e.concat(e));
-	}
-	
-	@Test
 	public void testContains() {
 		assertTrue(e.contains(e));
 	}

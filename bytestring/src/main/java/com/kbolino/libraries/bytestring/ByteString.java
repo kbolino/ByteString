@@ -7,6 +7,17 @@ import java.nio.ReadOnlyBufferException;
 /**
  * An immutable string of bytes.
  * Analogous to {@link String} but for {@code byte}s instead of {@code char}s.
+ * <p>By design, there are no concatenation methods in this interface.
+ * Concatenation is a cross-cutting concern and is addressed by factory
+ * methods in {@link ByteStrings}.  There are two ways to concatenate strings:
+ * <ol>
+ *   <li>Copying them if necessary, using {@code concat} methods
+ *     ({@linkplain ByteStrings#concat(ByteString[]) array/varargs},
+ *     {@linkplain ByteStrings#concat(java.util.Collection) collection}).</li>
+ *   <li>Roping them together without copying them, using {@code rope}
+ *     methods ({@linkplain ByteStrings#rope(ByteString[]) array/varargs},
+ *     {@linkplain ByteStrings#rope(java.util.Collection) collection}).</li>
+ * </ol>
  * @see ByteStrings
  */
 public interface ByteString {
@@ -211,21 +222,6 @@ public interface ByteString {
 	public int copyTo(ByteBuffer buffer, int length) throws NullPointerException,
 			IllegalArgumentException, IndexOutOfBoundsException, BufferOverflowException,
 			ReadOnlyBufferException;
-	
-	/**
-	 * Concatenates this string with another.
-	 * @param string  The string to append.
-	 * @return  A {@link ByteString} {@code b} such that
-	 *   <code>b.{@link #at(int) at}(i) == this.at(i)</code> for all
-	 *   {@code i} from 0 to <code>this.{@link #length()} - 1</code>, and
-	 *   <code>b.at(i) == string.at(i)</code> for all {@code i} from
-	 *   <code>this.length()</code> to <code>this.length() +
-	 *   string.length() - 1</code>.
-	 * @throws NullPointerException  If {@code string} is null.
-	 * @see ByteStrings#concat(ByteString[])
-	 * @see ByteStrings#rope(ByteString[])
-	 */
-	public ByteString concat(ByteString string) throws NullPointerException;
 	
 	/**
 	 * Finds a substring within this string.

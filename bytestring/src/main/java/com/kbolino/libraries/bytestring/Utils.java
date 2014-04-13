@@ -12,6 +12,12 @@ final class Utils {
 	/** Maximum value of an unsigned 8-bit integer. */
 	static final int UNSIGNED_MAX = 0xFF;
 	
+	/** Read-only empty byte buffer */
+	static final ByteBuffer EMPTY_BYTE_BUFFER = ByteBuffer.allocate(0).asReadOnlyBuffer();
+	
+	/** Empty byte array */
+	static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
+	
 	/**
 	 * Checks the given value as a signed or unsigned 8-bit integer.
 	 * @param value  The value to check.

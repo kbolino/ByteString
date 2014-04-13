@@ -5,7 +5,24 @@ import java.nio.ByteBuffer;
 import java.nio.ReadOnlyBufferException;
 
 /**
- * Abstract parent of {@link ByteString} implementations.
+ * Abstract parent for {@link ByteString}s.
+ * This class provides concrete implementations of most methods, as well
+ * as {@link #equals(Object)}, {@link #hashCode()}, and {@link #toString()}.
+ * <p>Subclasses need only implement {@link ByteString#length() length()}
+ * and {@link ByteString#at(int) at(int)}, but it may be advantageous
+ * to override other methods for improved performance.
+ * Possible optimization targets include:
+ * <ul>
+ *   <li>{@link #indexOf(int, int)},</li>
+ *   <li>{@link #subString(int, int)},</li>
+ *   <li>{@link #copyTo(byte[], int, int)}, and</li>
+ *   <li>{@link #copyTo(ByteBuffer, int)}.</li>
+ * </ul>
+ * <p>This class provides a number of {@code check} methods for validating
+ * the parameters passed to many of the {@link ByteString} methods in
+ * accordance with the rules of that interface.  These methods should be
+ * used when possible to avoid the error-prone task of validating parameters
+ * properly.
  */
 public abstract class AbstractByteString implements ByteString {
 	
@@ -263,19 +280,6 @@ public abstract class AbstractByteString implements ByteString {
 		} else {
 			final ByteString end = subString(length() - string.length(), length());
 			return string.equals(end);
-		}
-	}
-	
-	/** {@inheritDoc} */
-	public ByteString concat(final ByteString string) throws NullPointerException {
-		if (string == null) {
-			throw new NullPointerException("string is null");
-		} else if (string.length() == 0) {
-			return this;
-		} else if (length() == 0) {
-			return string;
-		} else {
-			return ArrayByteString.concat(this, string);
 		}
 	}
 	

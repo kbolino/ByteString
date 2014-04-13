@@ -71,21 +71,6 @@ public class ConstantByteStringTest {
 	}
 	
 	@Test
-	public void testConcat1() {
-		ByteString expected = a2;
-		ByteString actual = a.concat(a);
-		assertEquals(expected, actual);
-	}
-	
-	@Test
-	public void testConcat2() {
-		ByteString concat = a.concat(b);
-		assertEquals(2, concat.length());
-		assertEquals(A, concat.at(0));
-		assertEquals(B, concat.at(1));
-	}
-	
-	@Test
 	public void testContains() {
 		assertTrue(a3.contains(a2));
 		assertTrue(a3.contains(a));

@@ -48,8 +48,4 @@ public class RepeatedByteStringTest {
 		assertEquals(2, r3.indexOf(11, 2));
 	}
 	
-	@Test
-	public void testConcat() {
-		assertEquals(r2, r1.concat(r1));
-	}
 }

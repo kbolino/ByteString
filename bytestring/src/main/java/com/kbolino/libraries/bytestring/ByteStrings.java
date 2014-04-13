@@ -1,9 +1,11 @@
 package com.kbolino.libraries.bytestring;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Methods for obtaining {@code ByteString}s.
@@ -205,12 +207,11 @@ public final class ByteStrings {
 	}
 	
 	/**
-	 * Creates a new string by concatenating the given strings in order.
+	 * Concatenates strings together into a new string.
 	 * The strings may be copied in the process.
 	 * @param strings  The strings to concatenate.
-	 * @return  A {@link ByteString} equal to <code>strings[0].{@link
-	 *   ByteString#concat(ByteString) concat}(strings[1].concat(strings[2]
-	 *   ...))</code>.
+	 * @return  A {@link ByteString} equal to the concatenation of the
+	 *   elements of {@code strings}.
 	 * @throws NullPointerException  If {@code strings} or any of its
 	 *   elements are null.
 	 * @see #rope(ByteString[])
@@ -224,7 +225,7 @@ public final class ByteStrings {
 	}
 	
 	/**
-	 * Creates a new string by concatenating the given strings in order.
+	 * Concatenates strings together into a new string.
 	 * The strings may be copied in the process.
 	 * @param strings  The strings to concatenate.
 	 * @return  A {@link ByteString} equal to the concatenation of the
@@ -233,20 +234,32 @@ public final class ByteStrings {
 	 *   elements are null.
 	 * @see #rope(Collection)
 	 */
-	public static ByteString concat(final Iterable<ByteString> strings) throws NullPointerException {
+	public static ByteString concat(final Collection<ByteString> strings) throws NullPointerException {
 		if (strings == null) {
 			throw new NullPointerException("strings is null");
+		} else if (strings.isEmpty()) {
+			return Utils.EMPTY_STRING;
+		} else if (strings.size() == 1) {
+			return strings.iterator().next();
 		}
-		final Iterator<ByteString> it = strings.iterator();
-		ByteString string = empty();
-		for (int i = 0; it.hasNext(); i++) {
-			final ByteString s = it.next();
-			if (s == null) {
+		int length = 0;
+		for (ByteString string : strings) {
+			length += string.length();
+		}
+		if (length == 0) {
+			return Utils.EMPTY_STRING;
+		}
+		final byte[] bytes = new byte[length];
+		final Iterator<ByteString> iterator = strings.iterator();
+		int offset = 0;
+		for (int i = 0; iterator.hasNext(); i++) {
+			final ByteString string = iterator.next();
+			if (string == null) {
 				throw new NullPointerException(String.format("element %d of strings is null", i));
 			}
-			string = string.concat(s);
+			offset += string.copyTo(bytes, offset);
 		}
-		return string;
+		return new ArrayByteString(bytes);
 	}
 	
 	/**
@@ -332,7 +345,6 @@ public final class ByteStrings {
 	 * @throws NullPointerException  If {@code strings} or any of its
 	 *   elements are null.
 	 * @see #concat(ByteString[])
-	 * @see #rope(Collection)
 	 */
 	public static ByteString rope(final ByteString... strings) throws NullPointerException{
 		if (strings == null) {
@@ -351,21 +363,37 @@ public final class ByteStrings {
 	 *   elements of {@code strings} in order.
 	 * @throws NullPointerException  If {@code strings} or any of its
 	 *   elements are null.
-	 * @see #concat(Iterable)
-	 * @see #rope(ByteString[])
+	 * @see #concat(Collection)
 	 */
 	public static ByteString rope(final Collection<ByteString> strings) throws NullPointerException {
 		if (strings == null) {
 			throw new NullPointerException("strings is null");
-		} else if (strings.size() == 0) {
+		} else if (strings.isEmpty()) {
 			return empty();
-		} else {
-			// TODO remove empty strings from collection?
-			// TODO check for null strings in array
-			// TODO don't rope ropes
-			final ByteString[] array = new ByteString[strings.size()];
-			return new RopeByteString(strings.toArray(array)); 
+		} else if (strings.size() == 1) {
+			return strings.iterator().next();
 		}
+		final List<ByteString> ropeStrings = new ArrayList<ByteString>(strings.size());
+		final Iterator<ByteString> iterator = strings.iterator();
+		for (int i = 0; iterator.hasNext(); i++) {
+			final ByteString string = iterator.next();
+			if (string == null) {
+				throw new NullPointerException(String.format("element %d of strings is null", i));
+			} else if (string.isEmpty()) {
+				continue;
+			} else if (string instanceof RopeByteString) {
+				// don't rope ropes
+				final RopeByteString rope = (RopeByteString) string;
+				strings.addAll(rope.strings());
+			} else {
+				strings.add(string);
+			}
+		}
+		if (ropeStrings.isEmpty()) {
+			return empty();
+		}
+		final ByteString[] ropeArray = new ByteString[strings.size()];
+		return new RopeByteString(ropeStrings.toArray(ropeArray));
 	}
 	
 	/**
@@ -421,8 +449,16 @@ public final class ByteStrings {
 		if (endIndex == beginIndex) {
 			return empty();
 		}
-		// TODO don't slice slices
-		return new SlicedByteString(string, beginIndex, endIndex - beginIndex);
+		ByteString delegate = string;
+		int offset = beginIndex;
+		final int length = endIndex - beginIndex;
+		if (string instanceof SlicedByteString) {
+			// don't slice slices
+			final SlicedByteString slice = (SlicedByteString) string;
+			delegate = slice.delegate();
+			offset = slice.offset() + beginIndex;
+		}
+		return new SlicedByteString(delegate, offset, length);
 	}
 
 	/**

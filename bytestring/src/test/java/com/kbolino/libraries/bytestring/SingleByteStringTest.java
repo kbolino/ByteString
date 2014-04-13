@@ -35,11 +35,6 @@ public class SingleByteStringTest {
 	}
 	
 	@Test
-	public void testConcat() {
-		assertArrayEquals(new byte[]{60, 120}, b1.concat(b2).toByteArray());
-	}
-	
-	@Test
 	public void testSubString() {
 		assertEquals(Utils.EMPTY_STRING, b1.subString(0, 0));
 		assertEquals(b1, b1.subString(0, 1));

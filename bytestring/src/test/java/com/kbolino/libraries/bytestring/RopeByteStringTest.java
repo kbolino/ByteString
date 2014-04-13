@@ -35,7 +35,7 @@ public class RopeByteStringTest {
 	public void testSubString() {
 		assertEquals(b1, r.subString(0, 3));
 		assertEquals(b2, r.subString(3));
-		assertEquals(b1.subString(1).concat(b2.subString(0, 2)), r.subString(1, 5));
+		assertEquals(ArrayByteString.concat(b1.subString(1), b2.subString(0, 2)), r.subString(1, 5));
 	}
 	
 	@Test
@@ -49,8 +49,4 @@ public class RopeByteStringTest {
 		assertEquals(-1, r.indexOf(11, 2));
 	}
 	
-	@Test
-	public void testConcat() {
-		assertEquals(b1.concat(b2.concat(b1)), r.concat(b1));
-	}
 }

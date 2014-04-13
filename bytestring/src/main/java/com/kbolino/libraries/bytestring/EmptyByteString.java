@@ -8,9 +8,6 @@ import java.nio.ReadOnlyBufferException;
  * An empty {@link ByteString}.
  */
 final class EmptyByteString extends AbstractByteString {
-	private static final ByteBuffer EMPTY_BYTE_BUFFER = ByteBuffer.allocate(0).asReadOnlyBuffer();
-	private static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
-	
 	EmptyByteString() { }
 	
 	/** {@inheritDoc} */
@@ -39,12 +36,12 @@ final class EmptyByteString extends AbstractByteString {
 
 	/** {@inheritDoc} */
 	public byte[] toByteArray() {
-		return EMPTY_BYTE_ARRAY;
+		return Utils.EMPTY_BYTE_ARRAY;
 	}
 	
 	/** {@inheritDoc} */
 	public ByteBuffer toByteBuffer() {
-		return EMPTY_BYTE_BUFFER;
+		return Utils.EMPTY_BYTE_BUFFER;
 	}
 
 	/** {@inheritDoc} */

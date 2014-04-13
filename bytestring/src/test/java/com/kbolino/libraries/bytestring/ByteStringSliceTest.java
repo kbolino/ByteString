@@ -53,9 +53,4 @@ public class ByteStringSliceTest {
 		assertEquals(20, bytes[3]);
 	}
 	
-	@Test
-	public void testConcat() {
-		assertEquals(s2, s0.concat(s1));
-	}
-	
 }

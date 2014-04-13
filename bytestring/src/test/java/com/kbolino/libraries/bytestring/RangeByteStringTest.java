@@ -77,13 +77,6 @@ public class RangeByteStringTest {
 	}
 	
 	@Test
-	public void testConcat() {
-		assertEquals(small, small.concat(Utils.EMPTY_STRING));
-		assertEquals(large, first.concat(last));
-		assertEquals(signed, last.concat(first));
-	}
-	
-	@Test
 	public void testToString() {
 		assertEquals("{0A 0B 0C 0D 0E 0F 10 11 12 13 14}", small.toString());
 	}
