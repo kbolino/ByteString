@@ -10,7 +10,6 @@ import java.nio.ByteBuffer;
  * calls can be chained easily.
  */
 public final class ByteStringBuilder {
-	// TODO exceptions
 	private byte[] bytes;
 	private int length;
 	
@@ -21,7 +20,7 @@ public final class ByteStringBuilder {
 	 * </ol>
 	 * @param initialCapacity  The initial capacity.
 	 */
-	ByteStringBuilder(int initialCapacity) {
+	ByteStringBuilder(final int initialCapacity) {
 		bytes = new byte[initialCapacity];
 	}
 	
@@ -31,6 +30,19 @@ public final class ByteStringBuilder {
 	 */
 	public int length() {
 		return length;
+	}
+	
+	/**
+	 * Returns the value of a byte.
+	 * @param index  The index of the byte to retrieve.
+	 * @return  The value of the byte.
+	 * @throws IllegalArgumentException  If {@code index < 0}.
+	 * throws IndexOutOfBoundsException  If <code>index &gt;=
+	 *   {@link #length()}</code>.
+	 */
+	public byte at(final int index) throws IllegalArgumentException, IndexOutOfBoundsException {
+		// TODO check params
+		return bytes[index];
 	}
 	
 	/**
@@ -171,13 +183,163 @@ public final class ByteStringBuilder {
 		return this;
 	}
 	
-	// TODO at, unsignedAt
-	// TODO insert methods
-	// TODO replace methods
-	// TODO delete methods
+	/**
+	 * Shifts bytes downward in the internal array.  Preconditions:
+	 * <ol>
+	 *   <li>{@code fromIndex >= 0}</li>
+	 *   <li>{@code toIndex >= 0}</li>
+	 *   <li>{@code fromIndex < length}</li>
+	 * </ol>
+	 * The array is not back-filled, so bytes from {@code fromIndex} to
+	 * {@code toIndex - 1} retain their old values.
+	 * @param fromIndex  The index of the first byte to shift.
+	 * @param toIndex  The new index to receive the first byte.
+	 */
+	private void shiftBytes(final int fromIndex, final int toIndex) {
+		if (fromIndex == toIndex) {
+			return;
+		}
+		final int shift = toIndex - fromIndex;
+		ensureCapacity(length + shift);
+		if (shift < 0) {
+			for (int i = fromIndex; i < length; i++) {
+				bytes[i + shift] = bytes[i];
+			}
+		} else {
+			for (int i = length - 1; i >= fromIndex; i--) {
+				bytes[i + shift] = bytes[i];
+			}
+		}
+		length += shift;
+	}
 	
-	// TODO read from InputStream, ReadableByteChannel
+	/**
+	 * Inserts a byte into this builder.
+	 * TODO describe postconditions
+	 * @param index  The index at which to insert the byte.
+	 * @param value  The value of the byte to insert, as a signed or unsigned
+	 *   8-bit integer.
+	 * @return  {@code this}
+	 * @throws IllegalArgumentException  If {@code index < 0},
+	 *   <code>value &lt; {@link Byte#MIN_VALUE}</code>, or
+	 *   <code>value &gt; {@link ByteStrings#UNSIGNED_MAX}</code>.
+	 * @throws IndexOutOfBoundsException  If <code>index &gt;
+	 *   {@link #length()}</code>.
+	 */
+	public ByteStringBuilder insert(final int index, final int value)
+			throws IllegalArgumentException, IndexOutOfBoundsException {
+		// TODO check params
+		if (index == length) {
+			return append(value);
+		} else {
+			final byte b = Utils.toByteValue(value);
+			shiftBytes(index, index + 1);
+			bytes[index] = b;
+			return this;
+		}
+	}
 	
+	/**
+	 * Inserts a string into this builder.
+	 * TODO describe postconditions
+	 * @param index  The index at which to insert the string.
+	 * @param string  The string to insert.
+	 * @return  {@code this}
+	 * @throws NullPointerException  If {@code string == null}.
+	 * @throws IllegalArgumentException  If {@code index < 0}.
+	 * @throws IndexOutOfBoundsException  If <code>index &gt;
+	 *   {@link #length()}</code>.
+	 */
+	public ByteStringBuilder insert(final int index, final ByteString string)
+			throws NullPointerException, IllegalArgumentException, IndexOutOfBoundsException {
+		// TODO check params
+		if (index == length) {
+			return append(string);
+		} else {
+			shiftBytes(index, index + string.length());
+			string.copyTo(bytes, index);
+			return this;
+		}
+	}
+	
+	/**
+	 * Deletes a byte from this builder.
+	 * TODO describe postconditions
+	 * @param index  The index of the byte to delete.
+	 * @return  {@code this}
+	 * @throws IllegalArgumentException  If {@code index < 0}.
+	 * @throws IndexOutOfBoundsException  If <code>index &gt;=
+	 *   {@link #length()}</code>.
+	 */
+	public ByteStringBuilder delete(final int index)
+			throws IllegalArgumentException, IndexOutOfBoundsException {
+		return delete(index, 1);
+	}
+	
+	/**
+	 * Deletes bytes from this builder.
+	 * TODO describe postconditions
+	 * @param index  The index of the first byte to delete.
+	 * @param length  The number of bytes to delete.
+	 * @return  {@code this}
+	 * @throws IllegalArgumentException  If {@code index < 0}.
+	 * @throws IndexOutOfBoundsException  If <code>index &gt;=
+	 *   {@link #length()}</code>.
+	 */
+	public ByteStringBuilder delete(final int index, final int length)
+			throws IllegalArgumentException, IndexOutOfBoundsException {
+		// TODO check params
+		shiftBytes(index + length, index);
+		return this;
+	}
+	
+	/**
+	 * Replaces the value of a byte.
+	 * Afterwards, <code>{@link #at(int) at}(index) == (byte)value</code>.
+	 * @param index  The index of the byte to replace.
+	 * @param value  The new value for the byte, as a signed or unsigned
+	 *   8-bit integer.
+	 * @return  {@code this}
+	 * @throws IllegalArgumentException  If {@code index < 0},
+	 *   <code>value &lt; {@link Byte#MIN_VALUE}</code>, or
+	 *   <code>value &gt; {@link ByteStrings#UNSIGNED_MAX}</code>.
+	 * @throws IndexOutOfBoundsException  If <code>index &gt;=
+	 *   {@link #length()}</code>.
+	 */
+	public ByteStringBuilder replace(final int index, final int value)
+			throws IllegalArgumentException, IndexOutOfBoundsException {
+		// TODO check params
+		final byte b = Utils.toByteValue(value);
+		bytes[index] = b;
+		return this;
+	}
+	
+	/**
+	 * Replaces a sequence of bytes with a string.
+	 * TODO describe postconditions
+	 * @param index  The index of the first byte to replace.
+	 * @param string  The string to replace the bytes with.
+	 * @return  {@code this}
+	 * @throws NullPointerException  If {@code string == null}.
+	 * @throws IllegalArgumentException  If {@code index < 0}.
+	 * throws IndexOutOfBoundsException  If <code>index &gt;=
+	 *   {@link #length()}</code>.
+	 */
+	public ByteStringBuilder replace(final int index, final ByteString string)
+			throws NullPointerException, IllegalArgumentException, IndexOutOfBoundsException {
+		// TODO check params
+		for (int i = 0; i < string.length(); i++) {
+			bytes[i + index] = string.at(i);
+		}
+		return this;
+	}
+	
+	/**
+	 * Creates an array from this builder.
+	 * @return  A byte array {@code b} such that
+	 *   <code>b[i] == this.{@link #at(int) at}(i)</code> for all {@code i}
+	 *   from 0 to <code>this.{@link #length()} - 1</code>.
+	 */
 	public byte[] toByteArray() {
 		final byte[] copy = new byte[length];
 		if (length > 0) {
@@ -186,6 +348,13 @@ public final class ByteStringBuilder {
 		return copy;
 	}
 	
+	/**
+	 * Creates a string from this builder.
+	 * @return  A {@link ByteString} {@code b} such that
+	 *   <code>b.{@link ByteString#at(int) at}(i) == this.{@link #at(int)
+	 *   at}(i)</code> for all {@code i} from 0 to <code>this.{@link
+	 *   #length()} - 1</code>.
+	 */
 	public ByteString toByteString() {
 		if (length == 0) {
 			return Utils.EMPTY_STRING;
