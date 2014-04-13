@@ -7,7 +7,7 @@ import java.nio.ReadOnlyBufferException;
 /**
  * Abstract parent of {@link ByteString} implementations.
  */
-abstract class AbstractByteString implements ByteString {
+public abstract class AbstractByteString implements ByteString {
 	
 	/**
 	 * Checks parameters to {@link #checkAt(int)}.
