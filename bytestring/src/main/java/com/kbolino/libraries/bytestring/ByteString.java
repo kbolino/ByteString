@@ -23,7 +23,7 @@ public interface ByteString {
 	public boolean isEmpty();
 
 	/**
-	 * Returns the value at the given index.
+	 * Returns the value of a byte.
 	 * @param index  The index of the byte to retrieve.
 	 * @return  The value of the byte at {@code index}.
 	 * @throws IllegalArgumentException  If {@code index < 0}.
@@ -33,7 +33,7 @@ public interface ByteString {
 	public byte at(int index) throws IllegalArgumentException, IndexOutOfBoundsException;
 	
 	/**
-	 * Returns the unsigned value at the given index.
+	 * Returns the unsigned value of a byte.
 	 * @param index  The index of the byte to retrieve.
 	 * @return  The unsigned 8-bit value of the byte at {@code index}.
 	 * @throws IllegalArgumentException  If {@code index < 0}.
