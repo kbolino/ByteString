@@ -49,7 +49,9 @@ final class ArrayByteString extends AbstractByteString {
 	static ArrayByteString subString(final ByteString string, final int beginIndex, final int endIndex) {
 		final int length = endIndex - beginIndex;
 		final byte[] bytes = new byte[length];
-		string.copyTo(bytes, beginIndex, length);
+		for (int i = 0; i < length; i++) {
+			bytes[i] = string.at(i + beginIndex);
+		}
 		return new ArrayByteString(bytes);
 	}
 	
