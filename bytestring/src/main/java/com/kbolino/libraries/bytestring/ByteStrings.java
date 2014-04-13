@@ -424,6 +424,22 @@ public final class ByteStrings {
 		// TODO don't slice slices
 		return new SlicedByteString(string, beginIndex, endIndex - beginIndex);
 	}
+
+	/**
+	 * Creates a single-byte string.
+	 * @param value  The value of the byte.
+	 * @return  A {@link ByteString} {@code b} such that <code>b.{@link
+	 *   ByteString#length() length()} == 0</code> and <code>b.{@link
+	 *   ByteString#at(int) at}(0) == (byte)value</code>.
+	 * @throws IllegalArgumentException  If <code>value &lt; {@link
+	 *   Byte#MIN_VALUE}</code> or <code>value &gt; {@link
+	 *   #UNSIGNED_MAX}</code>.
+	 */
+	public static ByteString single(final int value) throws IllegalArgumentException {
+		final byte b = Utils.toByteValue(value);
+		return new SingleByteString(b);
+	}
 	
 	private ByteStrings() { }
+
 }
