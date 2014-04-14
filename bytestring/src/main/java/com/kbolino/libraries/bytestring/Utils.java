@@ -85,12 +85,26 @@ final class Utils {
 	}
 	
 	/**
+	 * Checks an index parameter.
+	 * @param name  The formal name of the parameter.
+	 * @param length  The length of the sequence.
+	 * @param index  The value of the parameter.
+	 */
+	static void checkIndex(final String name, final int length, final int index) {
+		if (index < 0) {
+			throw new IllegalArgumentException(String.format("%s (%d) < 0", name, index));
+		} else if (index >= length) {
+			throw new IndexOutOfBoundsException(String.format("%s (%d) >= length (%d)", name, index, length));
+		}
+	}
+	
+	/**
 	 * Checks parameters for substring methods.
-	 * @param string  The string.
+	 * @param length  The length of the string.
 	 * @param beginIndex  The first index, inclusive.
 	 * @param endIndex  The last index, exclusive.
 	 */
-	static void checkSubString(ByteString string, int beginIndex, int endIndex) {
+	static void checkSubString(final int length, final int beginIndex, final int endIndex) {
 		if (beginIndex < 0) {
 			throw new IllegalArgumentException(
 					String.format("beginIndex (%d) < 0", beginIndex));
@@ -101,7 +115,6 @@ final class Utils {
 			throw new IllegalArgumentException(
 					String.format("beginIndex (%d) > endIndex (%d)", beginIndex, endIndex));
 		} else {
-			final int length = string.length();
 			if (length > 0 && beginIndex >= length) {
 				throw new IndexOutOfBoundsException(
 						String.format("beginIndex (%d) >= length (%d)", beginIndex, length));

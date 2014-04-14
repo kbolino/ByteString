@@ -31,11 +31,13 @@ public abstract class AbstractByteString implements ByteString {
 	 * @param index  The index.
 	 */
 	protected void checkAt(final int index) {
-		final int length = length();
 		if (index < 0) {
 			throw new IllegalArgumentException(String.format("index (%d) < 0", index));
-		} else if (index >= length) {
-			throw new IndexOutOfBoundsException(String.format("index (%d) >= length (%d)", index, length));
+		} else {
+			final int length = length();
+			if (index >= length) {
+				throw new IndexOutOfBoundsException(String.format("index (%d) >= length (%d)", index, length));
+			}
 		}
 	}
 	
@@ -62,7 +64,7 @@ public abstract class AbstractByteString implements ByteString {
 	 * @param endIndex  The last index, exclusive.
 	 */
 	protected void checkSubString(final int beginIndex, final int endIndex) {
-		Utils.checkSubString(this, beginIndex, endIndex);
+		Utils.checkSubString(length(), beginIndex, endIndex);
 	}
 	
 	/**

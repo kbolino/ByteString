@@ -445,7 +445,7 @@ public final class ByteStrings {
 	public static ByteString slice(final ByteString string, int beginIndex, int endIndex)
 			throws NullPointerException, IllegalArgumentException, IndexOutOfBoundsException
 	{
-		Utils.checkSubString(string, beginIndex, endIndex);
+		Utils.checkSubString(string.length(), beginIndex, endIndex);
 		if (endIndex == beginIndex) {
 			return empty();
 		}
